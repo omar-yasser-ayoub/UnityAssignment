@@ -1507,7 +1507,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -2775,7 +2775,7 @@ GameObject:
   - component: {fileID: 2073194613}
   - component: {fileID: 2073194612}
   - component: {fileID: 2073194611}
-  - component: {fileID: 2073194618}
+  - component: {fileID: 2073194616}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2940,7 +2940,7 @@ Transform:
   - {fileID: 519420032}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2073194618
+--- !u!114 &2073194616
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2949,45 +2949,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 2073194610}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53e7321089b5ea246a34897c29a79d57, type: 3}
+  m_Script: {fileID: 11500000, guid: abe8162843c65d24c99bcddbcfb5f1c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  runSpeedMultiplier: 1.7
-  jumpForce: 8
+  stateConfig: {fileID: 11400000, guid: 4961299395c716841a39067fafe89e53, type: 2}
   groundCheck: {fileID: 0}
-  groundCheckRadius: 0.2
+  groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
+  liquidParticlePrefab: {fileID: 6688776033347128891, guid: cd6fe1de7df551343ab1a118b4c55c27, type: 3}
+  gasParticlePrefab: {fileID: 7475907477657449873, guid: c4e981913294a504fa45c8e775e3bc81, type: 3}
+  particleContainer: {fileID: 0}
   inputActionAsset: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  moveAction:
-    m_Name: Move
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 4ea7b745-7288-4c1f-adb5-3669840e24d8
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
-  jumpAction:
-    m_Name: Jump
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 54d2f620-ff18-4e23-bccc-232761fafb4c
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
-  sprintAction:
-    m_Name: Sprint
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 30fc7990-c6e9-4f30-b48c-971e5043f440
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

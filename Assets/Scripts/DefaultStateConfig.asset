@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8da5ac94b8b68a418fd65f57615bcf6, type: 3}
+  m_Name: DefaultStateConfig
+  m_EditorClassIdentifier: 
+  solidMoveSpeed: 5
+  solidRunMultiplier: 1.5
+  solidJumpForce: 0.5
+  liquidParticleCount: 20
+  liquidSpawnRadius: 2
+  liquidMoveSpeed: 1
+  liquidRunMultiplier: 1.3
+  liquidForceMultiplier: 5
+  liquidMaxSpeed: 1
+  liquidJumpForce: 0.3
+  liquidGravityScale: 2
+  liquidParticleMass: 0.02
+  liquidParticleRadius: 0.2
+  liquidDrag: 1
+  liquidAngularDrag: 0.5
+  liquidPhysicsMaterial: {fileID: 6200000, guid: 9b7a8b4a67fc40b46adf6575e219f958, type: 2}
+  liquidUseCohesion: 1
+  liquidCohesionRadius: 3
+  liquidCohesionForce: 0.3
+  liquidCenterAttraction: 0.3
+  liquidMaxSeparation: 2
+  liquidHardSeparationLimit: 1
+  liquidSeparationForce: 50
+  liquidInertiaStrength: 10
+  blobMaterial: {fileID: 2100000, guid: d349af02ba2492d47a8f88bdeaa75d0c, type: 2}
+  blobGridSize: 8
+  blobGridResolution: 80
+  blobParticleRadius: 0.2
+  blobSurfaceThreshold: 0.099
+  blobFalloffPower: 2
+  liquidInnerColor: {r: 0.1, g: 0.3, b: 0.8, a: 1}
+  liquidOuterColor: {r: 0.3, g: 0.6, b: 1, a: 0.9}
+  liquidEdgeColor: {r: 0.7, g: 0.9, b: 1, a: 1}
+  gasParticleCount: 10
+  gasSpawnRadius: 0.8
+  gasRiseForce: 5
+  gasMaxRiseSpeed: 3
+  gasDriftSpeed: 2
+  gasMaxHorizontalSpeed: 2
+  gasAutocondenseTime: 5
+  gasGravityScale: 0
+  gasParticleMass: 0.01
+  gasParticleRadius: 0.1
+  gasDrag: 2
+  gasAngularDrag: 1
+  gasIsTrigger: 0
+  gasCondenseOnCeilingHit: 1
+  gasUseRandomDrift: 1
+  gasDriftFrequency: 2
+  gasDriftAmplitude: 0.5
+  gasUseDispersion: 1
+  gasDispersionRadius: 0.5
+  gasDispersionForce: 1
+  frozenMass: 5
+  frozenDrag: 0.5
+  frozenMoveForce: 30
+  frozenMaxSpeed: 3
+  maxEnergy: 100
+  liquidTransformCost: 20
+  caveLevelUnlimitedEnergy: 1

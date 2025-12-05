@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// LEGACY: This controller handles basic solid-state movement.
+/// For the full Matter state system, use PlayerStateMachine instead.
+/// You can keep this as reference or delete it.
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour

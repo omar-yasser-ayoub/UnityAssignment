@@ -21,8 +21,8 @@ MonoBehaviour:
   liquidRunMultiplier: 1.3
   liquidForceMultiplier: 5
   liquidMaxSpeed: 1
-  liquidJumpForce: 0.3
-  liquidGravityScale: 2
+  liquidJumpForce: 0.15
+  liquidGravityScale: 1
   liquidParticleMass: 0.02
   liquidParticleRadius: 0.2
   liquidDrag: 1
@@ -30,12 +30,11 @@ MonoBehaviour:
   liquidPhysicsMaterial: {fileID: 6200000, guid: 9b7a8b4a67fc40b46adf6575e219f958, type: 2}
   liquidUseCohesion: 1
   liquidCohesionRadius: 3
-  liquidCohesionForce: 0.3
-  liquidCenterAttraction: 0.3
+  liquidCohesionForce: 0.1
+  liquidCenterAttraction: 0.1
   liquidMaxSeparation: 2
   liquidHardSeparationLimit: 1
   liquidSeparationForce: 50
-  liquidInertiaStrength: 10
   blobMaterial: {fileID: 2100000, guid: d349af02ba2492d47a8f88bdeaa75d0c, type: 2}
   blobGridSize: 8
   blobGridResolution: 80

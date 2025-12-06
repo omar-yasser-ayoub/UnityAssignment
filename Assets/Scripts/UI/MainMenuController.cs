@@ -9,32 +9,31 @@ public class MainMenuController : MonoBehaviour
 {
     [Header("Buttons")]
     public Button playButton;
-    public Button continueButton;
     public Button levelSelectButton;
+    public Button quitButton;
+
+    [Header("Optional Buttons")]
+    public Button continueButton;
     public Button settingsButton;
     public Button creditsButton;
-    public Button quitButton;
 
     [Header("Panels")]
     public GameObject mainPanel;
     public GameObject settingsPanel;
     public GameObject creditsPanel;
 
-    [Header("Settings")]
+    [Header("Settings (Optional)")]
     public Slider musicVolumeSlider;
     public Slider sfxVolumeSlider;
     public Toggle fullscreenToggle;
     public Button settingsBackButton;
 
-    [Header("Credits")]
+    [Header("Credits (Optional)")]
     public Button creditsBackButton;
 
-    [Header("Display")]
+    [Header("Display (Optional)")]
     public Text totalStarsText;
     public Text versionText;
-
-    [Header("Animation")]
-    public Animator titleAnimator;
 
     void Start()
     {
@@ -67,7 +66,7 @@ public class MainMenuController : MonoBehaviour
             playButton.onClick.AddListener(OnPlayClicked);
         }
 
-        // Continue - Load last unlocked level
+        // Continue - Load last unlocked level (optional)
         if (continueButton != null)
         {
             continueButton.onClick.AddListener(OnContinueClicked);
@@ -83,13 +82,13 @@ public class MainMenuController : MonoBehaviour
             levelSelectButton.onClick.AddListener(OnLevelSelectClicked);
         }
 
-        // Settings
+        // Settings (optional)
         if (settingsButton != null)
         {
             settingsButton.onClick.AddListener(ShowSettingsPanel);
         }
 
-        // Credits
+        // Credits (optional)
         if (creditsButton != null)
         {
             creditsButton.onClick.AddListener(ShowCreditsPanel);
@@ -134,19 +133,16 @@ public class MainMenuController : MonoBehaviour
 
     private void OnPlayClicked()
     {
-        Debug.Log("[MainMenu] Play clicked");
-        
-        // Reset progress for new game (optional)
-        // GameManager.Instance?.ResetProgress();
+        Debug.Log("[MainMenu] Play clicked - Loading Level 1");
         
         // Load first level
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.LoadLevel(0); // Cave_1 or Level_1
+            GameManager.Instance.LoadLevel(0);
         }
         else
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Cave_1");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Level 1");
         }
     }
 
@@ -181,7 +177,7 @@ public class MainMenuController : MonoBehaviour
         }
         else
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("LevelSelect");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Level Select");
         }
     }
 
@@ -246,13 +242,11 @@ public class MainMenuController : MonoBehaviour
     private void OnMusicVolumeChanged(float value)
     {
         PlayerPrefs.SetFloat("MusicVolume", value);
-        // AudioManager.Instance?.SetMusicVolume(value);
     }
 
     private void OnSFXVolumeChanged(float value)
     {
         PlayerPrefs.SetFloat("SFXVolume", value);
-        // AudioManager.Instance?.SetSFXVolume(value);
     }
 
     private void OnFullscreenChanged(bool value)
@@ -271,7 +265,7 @@ public class MainMenuController : MonoBehaviour
         {
             int totalStars = GameManager.Instance.GetTotalStars();
             int maxStars = GameManager.Instance.totalLevels * 3;
-            totalStarsText.text = $"? {totalStars}/{maxStars}";
+            totalStarsText.text = $"Stars: {totalStars}/{maxStars}";
         }
     }
 

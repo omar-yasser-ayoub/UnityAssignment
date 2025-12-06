@@ -13,10 +13,16 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Settings")]
     [Tooltip("Total number of levels in the game")]
-    public int totalLevels = 9; // 3 levels per area x 3 areas
+    public int totalLevels = 3;
     
-    [Tooltip("Stars required to unlock next area")]
-    public int starsPerArea = 5;
+    [Tooltip("Scene names for each level (in order)")]
+    public string[] levelSceneNames = { "Level 1", "Level 2", "Level 3" };
+
+    [Tooltip("Main menu scene name")]
+    public string mainMenuSceneName = "Menu";
+
+    [Tooltip("Level select scene name")]
+    public string levelSelectSceneName = "Level Select";
 
     [Header("Debug")]
     [SerializeField] private bool debugMode = false;
@@ -91,9 +97,6 @@ public class GameManager : MonoBehaviour
             levelStars[levelIndex] = stars;
             SaveProgress();
             OnStarsCollected?.Invoke(levelIndex, stars);
-
-            // Check for new area unlocks
-            CheckAreaUnlocks();
         }
     }
 
@@ -135,23 +138,6 @@ public class GameManager : MonoBehaviour
         if (nextLevel < totalLevels)
         {
             UnlockLevel(nextLevel);
-        }
-    }
-
-    private void CheckAreaUnlocks()
-    {
-        int totalStars = GetTotalStars();
-
-        // Area 2 (Forest) unlocks at 5 stars
-        if (totalStars >= starsPerArea && !IsLevelUnlocked(3))
-        {
-            UnlockLevel(3); // First forest level
-        }
-
-        // Area 3 (Cavern) unlocks at 10 stars
-        if (totalStars >= starsPerArea * 2 && !IsLevelUnlocked(6))
-        {
-            UnlockLevel(6); // First cavern level
         }
     }
 
@@ -209,21 +195,28 @@ public class GameManager : MonoBehaviour
     public void LoadMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 
     public void LoadLevelSelect()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("LevelSelect");
+        SceneManager.LoadScene(levelSelectSceneName);
     }
 
     public void LoadLevel(int levelIndex)
     {
+        if (levelIndex < 0 || levelIndex >= totalLevels)
+        {
+            Debug.LogWarning($"[GameManager] Invalid level index: {levelIndex}");
+            return;
+        }
+
         if (IsLevelUnlocked(levelIndex))
         {
             Time.timeScale = 1f;
             string levelName = GetLevelSceneName(levelIndex);
+            Debug.Log($"[GameManager] Loading level: {levelName}");
             SceneManager.LoadScene(levelName);
         }
         else
@@ -253,6 +246,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // Last level completed, return to level select
             LoadLevelSelect();
         }
     }
@@ -261,46 +255,27 @@ public class GameManager : MonoBehaviour
     {
         string currentScene = SceneManager.GetActiveScene().name;
         
-        // Parse level index from scene name (e.g., "Level_1" -> 0)
-        if (currentScene.StartsWith("Level_"))
+        // Search through our level scene names
+        for (int i = 0; i < levelSceneNames.Length; i++)
         {
-            if (int.TryParse(currentScene.Substring(6), out int levelNum))
+            if (levelSceneNames[i] == currentScene)
             {
-                return levelNum - 1; // Convert to 0-based index
-            }
-        }
-        
-        // Alternative naming: "Cave_1", "Forest_1", "Cavern_1"
-        string[] prefixes = { "Cave_", "Forest_", "Cavern_" };
-        for (int area = 0; area < prefixes.Length; area++)
-        {
-            if (currentScene.StartsWith(prefixes[area]))
-            {
-                if (int.TryParse(currentScene.Substring(prefixes[area].Length), out int levelNum))
-                {
-                    return (area * 3) + (levelNum - 1);
-                }
+                return i;
             }
         }
 
-        return -1;
+        return -1; // Not a level scene
     }
 
     private string GetLevelSceneName(int levelIndex)
     {
-        // You can customize this based on your scene naming convention
-        int area = levelIndex / 3;
-        int levelInArea = (levelIndex % 3) + 1;
-
-        string[] areaNames = { "Cave", "Forest", "Cavern" };
-        
-        if (area < areaNames.Length)
+        if (levelIndex >= 0 && levelIndex < levelSceneNames.Length)
         {
-            return $"{areaNames[area]}_{levelInArea}";
+            return levelSceneNames[levelIndex];
         }
 
-        // Fallback to generic naming
-        return $"Level_{levelIndex + 1}";
+        // Fallback
+        return $"Level {levelIndex + 1}";
     }
 
     #endregion

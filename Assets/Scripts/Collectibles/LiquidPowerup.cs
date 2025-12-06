@@ -16,6 +16,9 @@ public class LiquidPowerup : MonoBehaviour
     [Tooltip("Time before auto-transforming (for dramatic effect)")]
     public float transformDelay = 0.5f;
 
+    [Tooltip("Amount of energy to grant when collected (used when autoTransform is off)")]
+    public float energyAmount = 100f;
+
     [Header("Visual Effects")]
     [Tooltip("Particle effect to show when ability is unlocked")]
     public GameObject unlockEffectPrefab;
@@ -70,6 +73,12 @@ public class LiquidPowerup : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.UnlockLiquidAbility();
+        }
+
+        // Add energy so player can transform
+        if (EnergySystem.Instance != null)
+        {
+            EnergySystem.Instance.AddEnergy(energyAmount);
         }
 
         // Play unlock effect

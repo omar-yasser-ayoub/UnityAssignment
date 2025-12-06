@@ -10,9 +10,6 @@ using UnityEngine.Events;
 public class LiquidPowerup : MonoBehaviour
 {
     [Header("Settings")]
-    [Tooltip("Only grant ability once (saved to GameManager)")]
-    public bool oneTimeUnlock = true;
-    
     [Tooltip("Automatically transform player to liquid on entry")]
     public bool autoTransform = true;
     
@@ -22,12 +19,6 @@ public class LiquidPowerup : MonoBehaviour
     [Header("Visual Effects")]
     [Tooltip("Particle effect to show when ability is unlocked")]
     public GameObject unlockEffectPrefab;
-    
-    [Tooltip("Optional: Change pool color after used")]
-    public SpriteRenderer poolSprite;
-    
-    [Tooltip("Color when ability already obtained")]
-    public Color usedColor = new Color(0.3f, 0.3f, 0.5f, 0.8f);
 
     [Header("Audio")]
     public AudioClip unlockSound;
@@ -37,20 +28,11 @@ public class LiquidPowerup : MonoBehaviour
 
     [Header("Events")]
     public UnityEvent OnPowerupCollected;
-    public UnityEvent OnPlayerEnterPool;
 
-    private bool abilityGranted = false;
-    private bool playerInPool = false;
+    private bool isCollected = false;
 
     void Start()
     {
-        // Check if player already has the ability
-        if (GameManager.Instance != null && GameManager.Instance.HasLiquidAbility)
-        {
-            abilityGranted = true;
-            UpdateVisuals();
-        }
-
         // Ensure trigger
         var col = GetComponent<Collider2D>();
         col.isTrigger = true;
@@ -58,11 +40,17 @@ public class LiquidPowerup : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // Already collected this session
+        if (isCollected) return;
+        
         var player = other.GetComponent<PlayerStateMachine>();
         if (player == null) return;
 
-        playerInPool = true;
-        OnPlayerEnterPool?.Invoke();
+        // Only collect if player is in solid state
+        if (player.CurrentStateType != MatterState.Solid) return;
+
+        // Mark as collected immediately
+        isCollected = true;
 
         // Play splash sound
         if (splashSound != null)
@@ -70,32 +58,13 @@ public class LiquidPowerup : MonoBehaviour
             AudioSource.PlayClipAtPoint(splashSound, transform.position, volume);
         }
 
-        // Only grant ability if player is in solid state and doesn't have it yet
-        if (player.CurrentStateType == MatterState.Solid)
-        {
-            if (!abilityGranted || !oneTimeUnlock)
-            {
-                GrantLiquidAbility(player);
-            }
-            else if (autoTransform)
-            {
-                // Already have ability, just transform
-                StartCoroutine(DelayedTransform(player));
-            }
-        }
+        // Grant ability and collect
+        CollectPowerup(player);
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    private void CollectPowerup(PlayerStateMachine player)
     {
-        if (other.GetComponent<PlayerStateMachine>() != null)
-        {
-            playerInPool = false;
-        }
-    }
-
-    private void GrantLiquidAbility(PlayerStateMachine player)
-    {
-        abilityGranted = true;
+        Debug.Log("[LiquidPowerup] Collecting powerup!");
 
         // Save to GameManager
         if (GameManager.Instance != null)
@@ -106,7 +75,7 @@ public class LiquidPowerup : MonoBehaviour
         // Play unlock effect
         if (unlockEffectPrefab != null)
         {
-            Instantiate(unlockEffectPrefab, player.transform.position, Quaternion.identity);
+            Instantiate(unlockEffectPrefab, transform.position, Quaternion.identity);
         }
 
         // Play sound
@@ -124,40 +93,35 @@ public class LiquidPowerup : MonoBehaviour
             UIManager.Instance.ShowNotification("Liquid Form Unlocked!\nPress F to transform");
         }
 
-        // Update visuals
-        UpdateVisuals();
-
-        // Auto transform
+        // Auto transform then destroy
         if (autoTransform)
         {
-            StartCoroutine(DelayedTransform(player));
+            StartCoroutine(TransformThenDestroy(player));
         }
-
-        Debug.Log("[LiquidPowerup] Liquid ability granted!");
+        else
+        {
+            // Just destroy immediately
+            Destroy(gameObject);
+        }
     }
 
-    private System.Collections.IEnumerator DelayedTransform(PlayerStateMachine player)
+    private System.Collections.IEnumerator TransformThenDestroy(PlayerStateMachine player)
     {
         yield return new WaitForSeconds(transformDelay);
 
-        if (playerInPool && player.CurrentStateType == MatterState.Solid)
+        // Transform player to liquid
+        if (player != null && player.CurrentStateType == MatterState.Solid)
         {
             player.TransitionToState(MatterState.Liquid);
         }
-    }
 
-    private void UpdateVisuals()
-    {
-        if (poolSprite != null && abilityGranted)
-        {
-            poolSprite.color = usedColor;
-        }
+        // Destroy the powerup
+        Destroy(gameObject);
     }
 
     void OnDrawGizmos()
     {
-        // Draw pool indicator
-        Gizmos.color = abilityGranted ? Color.gray : Color.blue;
+        Gizmos.color = Color.blue;
         
         var col = GetComponent<Collider2D>();
         if (col != null)

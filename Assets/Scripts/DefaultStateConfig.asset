@@ -45,29 +45,46 @@ MonoBehaviour:
   liquidOuterColor: {r: 0.3, g: 0.6, b: 1, a: 0.9}
   liquidEdgeColor: {r: 0.7, g: 0.9, b: 1, a: 1}
   gasParticleCount: 10
-  gasSpawnRadius: 0.8
-  gasRiseForce: 5
-  gasMaxRiseSpeed: 3
+  gasSpawnRadius: 0.2
+  gasRiseForce: 1
+  gasMaxRiseSpeed: 1
   gasDriftSpeed: 2
   gasMaxHorizontalSpeed: 2
-  gasAutocondenseTime: 5
+  gasAutocondenseTime: 10
   gasGravityScale: 0
   gasParticleMass: 0.01
-  gasParticleRadius: 0.1
+  gasParticleRadius: 0.4
   gasDrag: 2
   gasAngularDrag: 1
   gasIsTrigger: 0
   gasCondenseOnCeilingHit: 1
-  gasUseRandomDrift: 1
+  gasUseRandomDrift: 0
   gasDriftFrequency: 2
-  gasDriftAmplitude: 0.5
+  gasDriftAmplitude: 0.1
   gasUseDispersion: 1
   gasDispersionRadius: 0.5
   gasDispersionForce: 1
+  gasUseCohesion: 1
+  gasCohesionRadius: 3
+  gasCohesionForce: 2
+  gasCenterAttraction: 3
+  gasMaxSeparation: 4
+  gasSeparationForce: 10
+  gasBlobMaterial: {fileID: 0}
+  gasBlobGridSize: 12
+  gasBlobGridResolution: 80
+  gasBlobParticleRadius: 0.4
+  gasBlobSurfaceThreshold: 0.199
+  gasBlobFalloffPower: 1.2
+  gasBlobEnableWobble: 1
+  gasBlobWobbleSpeed: 0.3
+  gasBlobWobbleIntensity: 0.1
+  gasInnerColor: {r: 0.9, g: 0.95, b: 1, a: 0.5}
+  gasEdgeColor: {r: 1, g: 1, b: 1, a: 0.2}
   frozenMass: 5
   frozenDrag: 0.5
   frozenMoveForce: 30
   frozenMaxSpeed: 3
-  maxEnergy: 100
+  maxEnergy: 20
   liquidTransformCost: 20
-  caveLevelUnlimitedEnergy: 1
+  caveLevelUnlimitedEnergy: 0

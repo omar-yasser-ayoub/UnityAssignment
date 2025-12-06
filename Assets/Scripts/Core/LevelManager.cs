@@ -34,7 +34,7 @@ public class LevelManager : MonoBehaviour
 
     [Header("Cave Level Settings")]
     [Tooltip("Is this a cave level with unlimited energy?")]
-    public bool isCaveLevel = true;
+    public bool isCaveLevel = false;  // Default to false - set true only for actual cave levels
 
     [Header("Events")]
     public UnityEvent OnLevelStart;

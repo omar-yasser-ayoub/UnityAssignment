@@ -40,8 +40,8 @@ public class EnergySystem : MonoBehaviour
 
     void Start()
     {
-        // Initialize energy
-        currentEnergy = MaxEnergy;
+        // Initialize energy to 0 (player must find recharge stations)
+        currentEnergy = 0f;
 
         // Check if this is a cave level (unlimited energy)
         if (LevelManager.Instance != null)
@@ -49,10 +49,10 @@ public class EnergySystem : MonoBehaviour
             isUnlimited = LevelManager.Instance.isCaveLevel;
         }
 
-        // Also check config setting
-        if (config != null && config.caveLevelUnlimitedEnergy)
+        // If unlimited, show full energy bar visually
+        if (isUnlimited)
         {
-            // Already handled by LevelManager check
+            currentEnergy = MaxEnergy;
         }
 
         UpdateUI();

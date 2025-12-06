@@ -214,11 +214,11 @@ public class PlayerStateMachine : MonoBehaviour
         switch (CurrentStateType)
         {
             case MatterState.Solid:
-                TransitionToState(MatterState.Liquid);
+                TryTransformTo(MatterState.Liquid);
                 break;
             case MatterState.Liquid:
                 // Liquid can only become gas through lava/cauldron interaction
-                // But can return to solid
+                // But can return to solid (free)
                 TransitionToState(MatterState.Solid);
                 break;
             case MatterState.Gas:
@@ -229,6 +229,32 @@ public class PlayerStateMachine : MonoBehaviour
                 TransitionToState(MatterState.Solid);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Try to transform to a new state, checking energy first
+    /// </summary>
+    private void TryTransformTo(MatterState targetState)
+    {
+        // Check if we have enough energy
+        if (EnergySystem.Instance != null)
+        {
+            float cost = EnergySystem.Instance.GetTransformationCost(targetState);
+            
+            if (!EnergySystem.Instance.TryUseEnergy(cost))
+            {
+                Debug.Log($"[PlayerStateMachine] Not enough energy to transform to {targetState}!");
+                // Optionally show a UI notification
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.ShowNotification("Not enough energy!");
+                }
+                return;
+            }
+        }
+
+        // Energy check passed (or no energy system), proceed with transformation
+        TransitionToState(targetState);
     }
 
     /// <summary>

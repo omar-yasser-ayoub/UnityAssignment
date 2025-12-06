@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
@@ -21,6 +23,9 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Star collectibles in this level (auto-found if empty)")]
     public List<StarCollectible> stars = new List<StarCollectible>();
 
+    [Tooltip("Delay before returning to level select after collecting all stars")]
+    public float levelCompleteDelay = 1.5f;
+
     [Header("Spawn Points")]
     [Tooltip("Where player spawns at level start")]
     public Transform playerSpawnPoint;
@@ -34,12 +39,12 @@ public class LevelManager : MonoBehaviour
 
     [Header("Cave Level Settings")]
     [Tooltip("Is this a cave level with unlimited energy?")]
-    public bool isCaveLevel = false;  // Default to false - set true only for actual cave levels
+    public bool isCaveLevel = false;
 
     [Header("Events")]
     public UnityEvent OnLevelStart;
     public UnityEvent OnLevelComplete;
-    public UnityEvent<int> OnStarCollected; // Passes current star count
+    public UnityEvent<int> OnStarCollected;
 
     // Runtime state
     private int starsCollected = 0;
@@ -126,6 +131,12 @@ public class LevelManager : MonoBehaviour
         {
             UIManager.Instance.UpdateStarCount(starsCollected, stars.Count);
         }
+
+        // Check if all stars collected - complete level automatically
+        if (starsCollected >= stars.Count)
+        {
+            CompleteLevel();
+        }
     }
 
     public int GetStarsCollected() => starsCollected;
@@ -173,19 +184,16 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log($"[LevelManager] Level {levelIndex} completed with {starsCollected} stars!");
 
-        // Save progress
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.CompleteLevel(levelIndex, starsCollected);
-        }
-
         OnLevelComplete?.Invoke();
 
-        // Show completion UI
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.ShowLevelComplete(starsCollected, stars.Count);
-        }
+        // Return to level select after delay
+        StartCoroutine(ReturnToLevelSelect());
+    }
+
+    private IEnumerator ReturnToLevelSelect()
+    {
+        yield return new WaitForSeconds(levelCompleteDelay);
+        SceneManager.LoadScene("Level Select");
     }
 
     public bool IsLevelCompleted() => levelCompleted;

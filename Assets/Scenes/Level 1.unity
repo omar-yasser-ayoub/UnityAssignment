@@ -7921,8 +7921,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d63704822b73b41b65038e610c30dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoTransform: 1
+  autoTransform: 0
   transformDelay: 0.5
+  energyAmount: 100
   unlockEffectPrefab: {fileID: 0}
   unlockSound: {fileID: 0}
   splashSound: {fileID: 0}
@@ -9110,7 +9111,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalLevels: 3
-  starsPerArea: 3
+  levelSceneNames:
+  - Level 1
+  - Level 2
+  - Level 3
+  mainMenuSceneName: Menu
+  levelSelectSceneName: Level Select
   debugMode: 0
 --- !u!4 &1757597995
 Transform:

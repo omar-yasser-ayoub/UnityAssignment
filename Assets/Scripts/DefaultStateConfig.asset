@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   solidMoveSpeed: 5
   solidRunMultiplier: 1.5
-  solidJumpForce: 0.5
+  solidJumpForce: 7
   liquidParticleCount: 20
   liquidSpawnRadius: 2
   liquidMoveSpeed: 1

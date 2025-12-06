@@ -169,14 +169,71 @@ public class PlayerStateConfig : ScriptableObject
     [Tooltip("Amplitude of the drift")]
     public float gasDriftAmplitude = 0.5f;
     
-    [Tooltip("Enable dispersion (particles spread out)")]
+    [Tooltip("Enable dispersion (particles spread out slightly)")]
     public bool gasUseDispersion = true;
     
     [Tooltip("Radius to check for dispersion")]
     public float gasDispersionRadius = 0.5f;
     
     [Tooltip("Force pushing particles apart")]
-    public float gasDispersionForce = 1f;
+    public float gasDispersionForce = 0.5f;
+
+    [Header("Gas Cohesion (Keeps Cloud Together)")]
+    [Tooltip("Enable cohesion between gas particles")]
+    public bool gasUseCohesion = true;
+    
+    [Tooltip("Radius to check for nearby particles")]
+    public float gasCohesionRadius = 3f;
+    
+    [Tooltip("Force attracting particles to each other (weaker than liquid)")]
+    public float gasCohesionForce = 2f;
+    
+    [Tooltip("Force attracting particles to group center")]
+    public float gasCenterAttraction = 3f;
+    
+    [Tooltip("Maximum distance a particle can be from group center")]
+    public float gasMaxSeparation = 4f;
+    
+    [Tooltip("Force applied when beyond max separation (soft rubber-band)")]
+    public float gasSeparationForce = 10f;
+
+    [Header("Gas Blob Rendering (Marching Squares)")]
+    [Tooltip("Material for the gas blob (should be transparent/additive)")]
+    public Material gasBlobMaterial;
+    
+    [Tooltip("Size of the marching squares grid in world units")]
+    public float gasBlobGridSize = 12f;
+    
+    [Tooltip("Resolution of the grid (higher = smoother but slower)")]
+    [Range(20, 80)]
+    public int gasBlobGridResolution = 40;
+    
+    [Tooltip("Radius of influence for each particle (larger = puffier clouds)")]
+    public float gasBlobParticleRadius = 2f;
+    
+    [Tooltip("Threshold for surface - LOWER = bigger, puffier clouds")]
+    [Range(0.05f, 0.3f)]
+    public float gasBlobSurfaceThreshold = 0.1f;
+    
+    [Tooltip("Falloff power - LOWER = softer edges, more diffuse")]
+    [Range(0.5f, 3f)]
+    public float gasBlobFalloffPower = 1.2f;
+    
+    [Tooltip("Enable wobble animation for organic movement")]
+    public bool gasBlobEnableWobble = true;
+    
+    [Tooltip("Speed of the wobble animation")]
+    public float gasBlobWobbleSpeed = 2f;
+    
+    [Tooltip("Intensity of the wobble")]
+    public float gasBlobWobbleIntensity = 0.1f;
+
+    [Header("Gas Colors")]
+    [Tooltip("Main color of the gas (semi-transparent white/light blue)")]
+    public Color gasInnerColor = new Color(0.9f, 0.95f, 1f, 0.5f);
+    
+    [Tooltip("Edge color of the gas (more transparent)")]
+    public Color gasEdgeColor = new Color(1f, 1f, 1f, 0.2f);
 
     [Header("=== FROZEN STATE ===")]
     [Tooltip("Mass when frozen (heavy!)")]

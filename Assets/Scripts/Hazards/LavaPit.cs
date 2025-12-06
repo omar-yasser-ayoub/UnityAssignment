@@ -19,6 +19,9 @@ public class LavaPit : MonoBehaviour
     [Header("Damage")]
     [Tooltip("Does solid form take damage from lava?")]
     public bool damagesSolid = true;
+    
+    [Tooltip("If true, solid players transform to gas instead of taking damage")]
+    public bool solidCanEvaporate = false;
 
     [Header("Visual Effects")]
     public GameObject steamEffectPrefab;
@@ -70,7 +73,15 @@ public class LavaPit : MonoBehaviour
         switch (player.CurrentStateType)
         {
             case MatterState.Solid:
-                if (damagesSolid)
+                if (solidCanEvaporate)
+                {
+                    // Transform solid directly to gas (skip liquid)
+                    if (!isTransforming)
+                    {
+                        StartCoroutine(EvaporatePlayer(player));
+                    }
+                }
+                else if (damagesSolid)
                 {
                     BurnPlayer();
                 }

@@ -25,13 +25,10 @@ public class SolidState : IPlayerState
         // Clear any leftover particles
         player.ClearParticles();
 
-        // Move player to particle center if coming from particle state
-        // (handled by the exiting state)
-
-        // Set animator state
-        player.Anim.SetBool("IsLiquid", false);
-        player.Anim.SetBool("IsGas", false);
-        player.Anim.SetBool("IsFrozen", false);
+        // Set animator state (with safety checks)
+        SetAnimatorBoolSafe("IsLiquid", false);
+        SetAnimatorBoolSafe("IsGas", false);
+        SetAnimatorBoolSafe("IsFrozen", false);
     }
 
     public void Update()
@@ -65,12 +62,19 @@ public class SolidState : IPlayerState
 
     public bool HandleJump()
     {
+        Debug.Log($"[SolidState] Jump pressed! IsGrounded: {player.IsGrounded}, groundCheck assigned: {player.groundCheck != null}");
+        
         if (player.IsGrounded)
         {
-            player.Anim.SetTrigger("Jump");
+            Debug.Log($"[SolidState] Jumping with force: {config.solidJumpForce}");
+            SetAnimatorTriggerSafe("Jump");
             player.Rb.linearVelocity = new Vector2(player.Rb.linearVelocity.x, config.solidJumpForce);
             player.JumpPressed = false;
             return true;
+        }
+        else
+        {
+            Debug.Log("[SolidState] Cannot jump - not grounded!");
         }
         player.JumpPressed = false;
         return false;
@@ -84,21 +88,63 @@ public class SolidState : IPlayerState
 
     private void UpdateAnimator()
     {
+        if (player.Anim == null) return;
+
         float absVelocityX = Mathf.Abs(player.Rb.linearVelocity.x);
 
         if (absVelocityX > 0.1f)
         {
             // Moving - set speed based on running or walking
             float speedValue = player.IsRunning ? 0.61f : 0.31f;
-            player.Anim.SetFloat("Speed", speedValue);
+            SetAnimatorFloatSafe("Speed", speedValue);
         }
         else
         {
             // Idle
-            player.Anim.SetFloat("Speed", 0f);
+            SetAnimatorFloatSafe("Speed", 0f);
         }
 
         // Set grounded state for jump animations
-        player.Anim.SetBool("IsGrounded", player.IsGrounded);
+        SetAnimatorBoolSafe("IsGrounded", player.IsGrounded);
+    }
+
+    // Helper methods to safely set animator parameters
+    private void SetAnimatorBoolSafe(string paramName, bool value)
+    {
+        if (player.Anim == null) return;
+        try
+        {
+            player.Anim.SetBool(paramName, value);
+        }
+        catch (System.Exception)
+        {
+            // Parameter doesn't exist - ignore silently
+        }
+    }
+
+    private void SetAnimatorFloatSafe(string paramName, float value)
+    {
+        if (player.Anim == null) return;
+        try
+        {
+            player.Anim.SetFloat(paramName, value);
+        }
+        catch (System.Exception)
+        {
+            // Parameter doesn't exist - ignore silently
+        }
+    }
+
+    private void SetAnimatorTriggerSafe(string paramName)
+    {
+        if (player.Anim == null) return;
+        try
+        {
+            player.Anim.SetTrigger(paramName);
+        }
+        catch (System.Exception)
+        {
+            // Parameter doesn't exist - ignore silently
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Gas state - the player becomes floating particles that rise upward
 /// with limited horizontal control. Used for reaching high areas.
+/// Rendered as a wispy cloud using marching squares.
 /// </summary>
 public class GasState : IPlayerState
 {
@@ -12,6 +13,7 @@ public class GasState : IPlayerState
     private PlayerStateMachine player;
     private PlayerStateConfig config;
     private List<GasParticle> particles = new List<GasParticle>();
+    private GasBlobRenderer blobRenderer;
     
     private float stateTimer;
 
@@ -21,14 +23,20 @@ public class GasState : IPlayerState
         this.config = player.Config;
         this.stateTimer = 0f;
 
+        // Clear any existing particle references
+        GasParticle.ClearAllParticles();
+
         // Hide the main player body
         player.SetMainBodyVisible(false);
+
+        // Setup blob renderer (marching squares for gas cloud)
+        SetupBlobRenderer();
 
         // Spawn gas particles at player position
         SpawnParticles();
 
         // Set animator state
-        player.Anim.SetBool("IsGas", true);
+        SetAnimatorBoolSafe("IsGas", true);
 
         Debug.Log($"Entered Gas state with {particles.Count} particles");
     }
@@ -62,10 +70,16 @@ public class GasState : IPlayerState
         // Move player to center of particles before clearing
         player.transform.position = GetParticlesCenter();
 
+        // Clear static list first
+        GasParticle.ClearAllParticles();
+
         // Clear all particles
         ClearParticles();
 
-        player.Anim.SetBool("IsGas", false);
+        // Cleanup blob renderer
+        CleanupBlobRenderer();
+
+        SetAnimatorBoolSafe("IsGas", false);
     }
 
     public void HandleMovement(Vector2 input, bool isRunning)
@@ -100,6 +114,49 @@ public class GasState : IPlayerState
     {
         // Gas can only condense back to Liquid
         return targetState == MatterState.Liquid;
+    }
+
+    private void SetupBlobRenderer()
+    {
+        // Create blob renderer object
+        GameObject rendererObj = new GameObject("GasBlobRenderer");
+        rendererObj.transform.position = player.transform.position;
+
+        // Add required components
+        rendererObj.AddComponent<MeshFilter>();
+        rendererObj.AddComponent<MeshRenderer>();
+        
+        blobRenderer = rendererObj.AddComponent<GasBlobRenderer>();
+        
+        // Configure renderer from config
+        blobRenderer.gridSize = config.gasBlobGridSize;
+        blobRenderer.gridResolution = config.gasBlobGridResolution;
+        blobRenderer.particleRadius = config.gasBlobParticleRadius;
+        blobRenderer.surfaceThreshold = config.gasBlobSurfaceThreshold;
+        blobRenderer.falloffPower = config.gasBlobFalloffPower;
+        blobRenderer.gasColor = config.gasInnerColor;
+        blobRenderer.gasEdgeColor = config.gasEdgeColor;
+        blobRenderer.useGradient = true;
+        blobRenderer.enableWobble = config.gasBlobEnableWobble;
+        blobRenderer.wobbleSpeed = config.gasBlobWobbleSpeed;
+        blobRenderer.wobbleIntensity = config.gasBlobWobbleIntensity;
+        blobRenderer.showDebugGizmos = false;
+
+        // Assign material
+        if (config.gasBlobMaterial != null)
+        {
+            blobRenderer.gasMaterial = config.gasBlobMaterial;
+        }
+    }
+
+    private void CleanupBlobRenderer()
+    {
+        if (blobRenderer != null)
+        {
+            blobRenderer.ClearParticles();
+            Object.Destroy(blobRenderer.gameObject);
+            blobRenderer = null;
+        }
     }
 
     private void ApplyConstantRise()
@@ -146,6 +203,19 @@ public class GasState : IPlayerState
 
             particle.Initialize(config, player);
             particles.Add(particle);
+
+            // Register with blob renderer
+            if (blobRenderer != null)
+            {
+                blobRenderer.RegisterParticle(particleObj.transform);
+            }
+
+            // Hide the sprite renderer since we're using the blob mesh
+            SpriteRenderer sr = particleObj.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.enabled = false; // Hide individual particles
+            }
         }
     }
 
@@ -186,5 +256,19 @@ public class GasState : IPlayerState
     public void Condense()
     {
         player.TransitionToState(MatterState.Liquid);
+    }
+
+    // Helper method to safely set animator parameters
+    private void SetAnimatorBoolSafe(string paramName, bool value)
+    {
+        if (player.Anim == null) return;
+        try
+        {
+            player.Anim.SetBool(paramName, value);
+        }
+        catch (System.Exception)
+        {
+            // Parameter doesn't exist - ignore silently
+        }
     }
 }

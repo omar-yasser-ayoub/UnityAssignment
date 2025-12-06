@@ -34,6 +34,13 @@ public class LiquidBlobRenderer : MonoBehaviour
     public Material blobMaterial;
     public Color blobColor = new Color(0.2f, 0.5f, 1f, 1f);
     
+    [Header("Sorting Layer")]
+    [Tooltip("Sorting layer name for the blob renderer")]
+    public string sortingLayerName = "Default";
+    
+    [Tooltip("Sorting order within the layer")]
+    public int sortingOrder = 0;
+    
     [Header("Debug")]
     public bool showDebugGizmos = false;
 
@@ -88,6 +95,10 @@ public class LiquidBlobRenderer : MonoBehaviour
             meshRenderer.material = mat;
         }
         meshRenderer.material.color = blobColor;
+        
+        // Set sorting layer
+        meshRenderer.sortingLayerName = sortingLayerName;
+        meshRenderer.sortingOrder = sortingOrder;
     }
 
     void LateUpdate()

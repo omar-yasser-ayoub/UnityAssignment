@@ -37,6 +37,13 @@ public class GasBlobRenderer : MonoBehaviour
     [Tooltip("Enable gradient from center to edge")]
     public bool useGradient = true;
 
+    [Header("Sorting Layer")]
+    [Tooltip("Sorting layer name for the gas renderer")]
+    public string sortingLayerName = "Default";
+    
+    [Tooltip("Sorting order within the layer")]
+    public int sortingOrder = 0;
+
     [Header("Animation")]
     [Tooltip("Enable wobble animation for organic movement")]
     public bool enableWobble = true;
@@ -105,6 +112,10 @@ public class GasBlobRenderer : MonoBehaviour
         
         // Set render queue to transparent
         meshRenderer.material.renderQueue = 3000;
+        
+        // Set sorting layer
+        meshRenderer.sortingLayerName = sortingLayerName;
+        meshRenderer.sortingOrder = sortingOrder;
     }
 
     void LateUpdate()

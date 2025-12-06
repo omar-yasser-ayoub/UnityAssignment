@@ -8,6 +8,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerStateConfig", menuName = "Matter/Player State Config")]
 public class PlayerStateConfig : ScriptableObject
 {
+    [Header("=== RENDERING ===")]
+    [Tooltip("Sorting layer name for the player (all states)")]
+    public string sortingLayerName = "Player";
+    
+    [Tooltip("Sorting order within the layer")]
+    public int sortingOrder = 0;
+
     [Header("=== SOLID STATE ===")]
     [Tooltip("Base movement speed in solid form")]
     public float solidMoveSpeed = 5f;
@@ -239,14 +246,14 @@ public class PlayerStateConfig : ScriptableObject
     [Tooltip("Mass when frozen (heavy!)")]
     public float frozenMass = 5f;
     
-    [Tooltip("Drag when frozen (low = slippery)")]
-    public float frozenDrag = 0.5f;
+    [Tooltip("Drag when frozen (very low = super slippery)")]
+    public float frozenDrag = 0.1f;
     
-    [Tooltip("Force applied for movement")]
-    public float frozenMoveForce = 30f;
+    [Tooltip("Force applied for movement (high force, low control)")]
+    public float frozenMoveForce = 15f;
     
     [Tooltip("Maximum speed when frozen")]
-    public float frozenMaxSpeed = 3f;
+    public float frozenMaxSpeed = 6f;
 
     [Header("=== ENERGY SYSTEM ===")]
     [Tooltip("Maximum energy")]

@@ -1,9 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Frozen state - the player becomes a heavy ice block.
-/// Can activate pressure plates, but has limited mobility.
-/// Movement is slippery and cannot jump.
+/// Frozen state - the player becomes a frozen ice block.
+/// Movement is super slippery, no jumping, no animations, tinted blue.
 /// </summary>
 public class FrozenState : IPlayerState
 {
@@ -11,33 +10,53 @@ public class FrozenState : IPlayerState
 
     private PlayerStateMachine player;
     private PlayerStateConfig config;
+    private Color originalColor;
+    private float originalAnimSpeed;
+
+    // Frozen visual settings
+    private static readonly Color FROZEN_TINT = new Color(0.5f, 0.7f, 1f, 1f); // Blue tint
 
     public void Enter(PlayerStateMachine player)
     {
         this.player = player;
         this.config = player.Config;
 
-        // Make sure main body is visible
-        player.SetMainBodyVisible(true);
+        // IMPORTANT: Get the particle center position BEFORE clearing particles
+        // This ensures we spawn at the correct location when transitioning from Liquid/Gas
+        Vector3 particleCenter = player.GetParticlesCenterPosition();
+        
+        // Move player to particle center before making visible
+        player.transform.position = particleCenter;
 
-        // Clear any particles
+        // Clear any particles (must be done after getting center position)
         player.ClearParticles();
 
-        // Modify physics for heavy, slippery movement
-        player.Rb.mass = config.frozenMass;
-        player.Rb.linearDamping = config.frozenDrag; // Low drag = slippery
+        // Make sure main body is visible (after positioning)
+        player.SetMainBodyVisible(true);
 
-        // Set animator state
+        // Store original color and apply blue tint
+        originalColor = player.SpriteRenderer.color;
+        player.SpriteRenderer.color = FROZEN_TINT;
+
+        // Disable animations by setting speed to 0
+        originalAnimSpeed = player.Anim.speed;
+        player.Anim.speed = 0f;
+
+        // Modify physics for super slippery movement
+        player.Rb.mass = config.frozenMass;
+        player.Rb.linearDamping = config.frozenDrag; // Very low drag = super slippery
+
+        // Set animator state (for any state-based logic)
         player.Anim.SetBool("IsFrozen", true);
         player.Anim.SetBool("IsLiquid", false);
         player.Anim.SetBool("IsGas", false);
 
-        Debug.Log("Entered Frozen state - heavy and slippery!");
+        Debug.Log("Entered Frozen state - blue, slippery, no animations!");
     }
 
     public void Update()
     {
-        UpdateAnimator();
+        // No animator updates since animations are frozen
     }
 
     public void FixedUpdate()
@@ -48,12 +67,17 @@ public class FrozenState : IPlayerState
         if (player.JumpPressed)
         {
             player.JumpPressed = false;
-            // Could play a "can't jump" sound or animation here
         }
     }
 
     public void Exit()
     {
+        // Restore original color
+        player.SpriteRenderer.color = originalColor;
+
+        // Restore animation speed
+        player.Anim.speed = originalAnimSpeed;
+
         // Restore normal physics
         player.RestoreOriginalPhysics();
 
@@ -62,13 +86,13 @@ public class FrozenState : IPlayerState
 
     public void HandleMovement(Vector2 input, bool isRunning)
     {
-        // Frozen movement is force-based for slippery feel
+        // Super slippery force-based movement - only left and right
         float moveForce = config.frozenMoveForce;
 
-        // Apply horizontal force (slippery - momentum carries)
+        // Apply horizontal force only (no vertical control)
         player.Rb.AddForce(new Vector2(input.x * moveForce, 0));
 
-        // Clamp max speed (slower than normal due to ice physics)
+        // Clamp max speed
         Vector2 vel = player.Rb.linearVelocity;
         float maxSpeed = config.frozenMaxSpeed;
         vel.x = Mathf.Clamp(vel.x, -maxSpeed, maxSpeed);
@@ -77,7 +101,7 @@ public class FrozenState : IPlayerState
 
     public bool HandleJump()
     {
-        // Frozen cannot jump - too heavy!
+        // Frozen cannot jump!
         player.JumpPressed = false;
         return false;
     }
@@ -86,23 +110,6 @@ public class FrozenState : IPlayerState
     {
         // Frozen can melt back to Liquid or directly to Solid
         return targetState == MatterState.Liquid || targetState == MatterState.Solid;
-    }
-
-    private void UpdateAnimator()
-    {
-        float absVelocityX = Mathf.Abs(player.Rb.linearVelocity.x);
-
-        if (absVelocityX > 0.1f)
-        {
-            // Sliding animation
-            player.Anim.SetFloat("Speed", 0.2f); // Slow sliding animation
-        }
-        else
-        {
-            player.Anim.SetFloat("Speed", 0f);
-        }
-
-        player.Anim.SetBool("IsGrounded", player.IsGrounded);
     }
 
     /// <summary>

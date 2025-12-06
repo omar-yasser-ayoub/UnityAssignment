@@ -162,6 +162,10 @@ public class LiquidState : IPlayerState
         blobRenderer.falloffPower = config.blobFalloffPower;
         blobRenderer.blobColor = config.liquidInnerColor;
         blobRenderer.showDebugGizmos = false;
+        
+        // Set sorting layer from config
+        blobRenderer.sortingLayerName = config.sortingLayerName;
+        blobRenderer.sortingOrder = config.sortingOrder;
 
         // Assign material
         if (config.blobMaterial != null)

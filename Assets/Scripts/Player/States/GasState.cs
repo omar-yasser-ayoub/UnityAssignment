@@ -141,6 +141,10 @@ public class GasState : IPlayerState
         blobRenderer.wobbleSpeed = config.gasBlobWobbleSpeed;
         blobRenderer.wobbleIntensity = config.gasBlobWobbleIntensity;
         blobRenderer.showDebugGizmos = false;
+        
+        // Set sorting layer from config
+        blobRenderer.sortingLayerName = config.sortingLayerName;
+        blobRenderer.sortingOrder = config.sortingOrder;
 
         // Assign material
         if (config.gasBlobMaterial != null)
